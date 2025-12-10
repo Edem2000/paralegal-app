@@ -1,0 +1,6 @@
+[submodule "backend"]
+	path = backend
+	url = https://github.com/Edem2000/paralegal-api
+[submodule "frontend"]
+	path = frontend
+	url = https://github.com/Edem2000/paralegal-front
