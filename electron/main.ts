@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, Menu } from 'electron';
 import * as path from 'path';
 
 let mainWindow: BrowserWindow | null = null;
@@ -33,18 +33,19 @@ function startBackend() {
 function createWindow() {
     mainWindow = new BrowserWindow({
         width: 1200,
-        height: 800,
+        height: 900,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'), // в dist/electron/preload.js
             contextIsolation: true,
             nodeIntegration: false
         }
     });
+    mainWindow.setMenu(null);
 
     if (isDev) {
         // дев-режим
         mainWindow.loadURL('http://localhost:5173'); // поправь порт под свой фронт
-        mainWindow.webContents.openDevTools();
+        // mainWindow.webContents.openDevTools();
     } else {
         // прод-режим
         // __dirname здесь: .../resources/app.asar/dist/electron
@@ -61,7 +62,7 @@ function createWindow() {
         mainWindow.loadFile(indexPath);
 
         // Временная отладка, чтобы увидеть ошибки
-        mainWindow.webContents.openDevTools();
+        // mainWindow.webContents.openDevTools();
         mainWindow.webContents.on('did-fail-load', (_e, code, desc, url) => {
             console.error('did-fail-load', { code, desc, url });
         });
@@ -74,6 +75,7 @@ function createWindow() {
 
 app.on('ready', () => {
     startBackend();
+    Menu.setApplicationMenu(null);
     createWindow();
 
 });
