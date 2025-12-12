@@ -1,0 +1,107 @@
+{
+  "name": "paralegal-app",
+  "version": "1.0.0",
+  "description": "Desktop application for personal data anonymization",
+  "main": "dist/electron/main.js",
+  "scripts": {
+    "install:inner": "cd frontend && npm install && cd ../backend && npm install && cd ..",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && npm run start:dev",
+    "dev:electron": "ts-node ./electron/main.ts",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\" \"npm run dev:electron\"",
+    "update:submodules": "git submodule update --init --remote --recursive",
+    "sync-env": "node ./scripts/sync-env.mjs",
+    "build:frontend": "cd frontend && npm install && npm run build",
+    "build:backend": "cd backend && npm install && npm run build",
+    "build:backend:bundle": "cd backend && npm ci --omit=dev && npm run build:bundle",
+    "build:electron": "tsc -p .",
+    "build:app": "npm run update:submodules && npm run sync-env && npm run build:frontend && npm run build:backend:bundle && npm run build:electron",
+    "dist": "npm run build:app && electron-builder"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "fs-extra": "^11.3.2"
+  },
+  "devDependencies": {
+    "@types/electron": "^1.4.38",
+    "@types/node": "^25.0.0",
+    "concurrently": "^9.2.1",
+    "electron": "^39.2.6",
+    "electron-builder": "^26.0.12",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  },
+  "build": {
+    "appId": "com.paralegal.desktop",
+    "productName": "Paralegal",
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "files": [
+      "dist/electron/**/*",
+      "frontend/dist/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "backend/bundle",
+        "to": "backend"
+      },
+
+      {
+        "from": "backend/node_modules/realm",
+        "to": "backend/node_modules/realm",
+        "filter": [
+          "package.json",
+          "dist/**",
+          "binding/**"
+        ]
+      },
+
+      {
+        "from": "backend/node_modules/realm/prebuilds",
+        "to": "backend/node_modules/realm/prebuilds",
+        "filter": [
+          "node/**"
+        ]
+      },
+
+      {
+        "from": "backend/node_modules/@realm",
+        "to": "backend/node_modules/@realm"
+      },
+      {
+        "from": "backend/node_modules/bson",
+        "to": "backend/node_modules/bson"
+      },
+      {
+        "from": "backend/node_modules/debug",
+        "to": "backend/node_modules/debug"
+      },
+      {
+        "from": "backend/node_modules/node-machine-id",
+        "to": "backend/node_modules/node-machine-id"
+      },
+      {
+        "from": "backend/node_modules/path-browserify",
+        "to": "backend/node_modules/path-browserify"
+      },
+      {
+        "from": "backend/node_modules/prebuild-install",
+        "to": "backend/node_modules/prebuild-install"
+      },
+      {
+        "from": "backend/node_modules/ms",
+        "to": "backend/node_modules/ms"
+      }
+    ],
+    "win": {
+      "icon": "electron/assets/logo_icon.ico",
+      "target": "nsis"
+    },
+    "afterPack": "./scripts/afterPack.js"
+  }
+}
